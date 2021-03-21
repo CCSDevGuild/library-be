@@ -11,7 +11,12 @@ const get = async (req, res) => {
 };
 
 const post = async (req, res) => {
-    const { title, author, genre, poster } = req.body;
+    const { title, author, genre } = req.body;
+    let poster = "";
+
+    if (req.files && req.files.poster) {
+        poster = req.files.poster.path;
+    }
 
     const book = {
         title, author, genre, poster
@@ -20,6 +25,9 @@ const post = async (req, res) => {
     try {
         // Service call
         const bookResp = await bookService.createBook(book);
+
+        // Prepend baseURL of the app
+        bookResp.poster = process.env.BASE_URL + bookResp.poster;
 
         res.json(bookResp);
     } catch (error) {
