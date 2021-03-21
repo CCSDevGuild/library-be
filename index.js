@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require("express");
 const expressFileupload = require("express-fileupload");
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
 
@@ -10,6 +11,7 @@ const app = express();
 const book = require('./routes/book');
 
 // Middleware Dependencies
+app.use(cors())
 app.use(express.json());
 app.use(expressFileupload());
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
