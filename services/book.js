@@ -14,4 +14,24 @@ const createBook = async (book) => {
     return {id, ...book};
 };
 
-module.exports = { getBooks, createBook }
+// This would remove book by ID
+const removeBook = async (bookId) => {
+    const [{affectedRows}] = await db.query('DELETE FROM book WHERE id = ?', bookId);
+
+    return affectedRows > 0;
+}
+
+const updateBook = async (id, book) => {
+    const [{affectedRows}] = await db.query('UPDATE book SET ? WHERE id = ?', [book, id]);
+
+    if (affectedRows > 0) {
+        return {
+            id,
+            ...book
+        };
+    }
+
+    return null;
+}
+
+module.exports = { getBooks, createBook, removeBook, updateBook }

@@ -35,7 +35,52 @@ const post = async (req, res) => {
     }
 };
 
+const remove = async (req, res) => {
+    const bookId = req.params.bookId;
+
+    // Service call
+    const success = await bookService.removeBook(bookId);
+
+    if (success) {
+        return res.json({message: `Book '${bookId}' successfully deleted.`});
+    }
+
+    return res.json({message: `Unable to delete book '${bookId}'.`});
+};
+
+const update = async (req, res) => {
+    const { id, title, author, genre } = req.body;
+    let poster = "";
+
+    if (req.files && req.files.poster) {
+        poster = req.files.poster.path;
+    }
+
+    const book = {
+        title, author, genre, poster
+    };
+
+    try {
+        // Service call
+        const bookResp = await bookService.updateBook(parseInt(id), book);
+
+        if (bookResp) {
+            // Prepend baseURL of the app
+            book.poster = process.env.BASE_URL + bookResp.poster;
+
+            return res.json(bookResp);
+        }
+
+        return res.json({message: "Unable to update book."});
+    } catch (error) {
+        res.status(400).json({message: error});
+    }
+};
+
+
 module.exports = {
     get,
-    post
+    post,
+    remove,
+    update
 }
